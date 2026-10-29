@@ -1,0 +1,28 @@
+# 核心：PDF 解析与文本处理
+pymupdf>=1.24
+jieba>=0.42
+
+# 向量化与检索
+sentence-transformers>=3.0
+torch>=2.2
+faiss-cpu>=1.8
+scikit-learn>=1.4
+
+# 大模型调用（OpenAI 兼容接口）
+openai>=1.30
+
+# 数据处理与可视化
+numpy>=1.26
+pandas>=2.0
+matplotlib>=3.8
+tqdm
+
+# Notebook 与演示界面
+jupyterlab>=4.0
+nbconvert>=7.0
+ipykernel
+ipywidgets
+gradio>=6.0,<7.0
+
+# 文档生成（实验报告）
+python-docx>=1.1

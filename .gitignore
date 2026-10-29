@@ -1,0 +1,40 @@
+# ---- 密钥，绝对不要提交 ----
+deepseek_api_key.txt
+.env
+*.key
+
+# ---- 大文件 / 第三方资源 ----
+# 模型权重：首次运行会自动下载到 models/
+models/
+*.safetensors
+*.bin
+
+# 原始语料 PDF：版权归原作者，请自行准备
+*.pdf
+!RAG知识问答系统_实验报告.pdf
+!figures/*.pdf
+
+# 派生索引：可由 Notebook 从 PDF 重建，且内含教材原文
+rag_index/
+*.faiss
+embeddings.npy
+
+# ---- Word 临时锁文件 ----
+~$*
+*.tmp
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- AI 协作工具的本地记录 ----
+.workbuddy/

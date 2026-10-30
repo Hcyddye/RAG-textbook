@@ -1,0 +1,8 @@
+# Windows 批处理必须是 CRLF 换行，否则 cmd 解析会错位、双击直接闪退
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 图片按二进制处理，不做任何换行转换
+*.png binary
+*.jpg binary
+*.pdf binary

@@ -1,13 +1,48 @@
 @echo off
-chcp 65001 >nul
+setlocal
 cd /d "%~dp0"
+title RAG ½Ì²ÄÖªÊ¶ÎÊ´ð - ÑÝÊ¾·þÎñ
+
 echo ============================================
-echo   RAG æ•™æçŸ¥è¯†é—®ç­” - æ¼”ç¤ºæœåŠ¡
-echo   å¯åŠ¨åŽæµè§ˆå™¨ä¼šè‡ªåŠ¨æ‰“å¼€ http://127.0.0.1:7860
-echo   å…³é—­æœ¬çª—å£å³åœæ­¢æœåŠ¡
+echo   RAG ½Ì²ÄÖªÊ¶ÎÊ´ð - ±¾µØÑÝÊ¾·þÎñ
 echo ============================================
 echo.
+
+if not exist ".venv\Scripts\python.exe" (
+    echo [´íÎó] ÕÒ²»µ½ .venv\Scripts\python.exe
+    echo        ÕâÌ¨µçÄÔÉÏµÄÐéÄâ»·¾³²»ÍêÕû£¬ÎÞ·¨Æô¶¯ÊµÊ±ÎÊ´ð¡£
+    echo        Ö»Ïë¿´Ð§¹ûµÄ»°£¬Ö±½ÓË«»÷ RAG½çÃæ.html ¼´¿É¡£
+    echo.
+    pause
+    exit /b 1
+)
+
+rem ¶Ë¿ÚÒÑ±»Õ¼ÓÃËµÃ÷·þÎñÒÑ¾­ÔÚÅÜ£¬²»ÒªÔÙÆô¶¯µÚ¶þ¸ö£¬·ñÔò»áÒò¶Ë¿Ú³åÍ»Ò»ÉÁ¾ÍÍË³ö
+".venv\Scripts\python.exe" -c "import socket,sys; sys.exit(0 if socket.socket().connect_ex(('127.0.0.1',7860))==0 else 1)" >nul 2>&1
+if %errorlevel%==0 (
+    echo ¼ì²âµ½·þÎñÒÑÔÚÔËÐÐ£¬Ö±½Ó´ò¿ªä¯ÀÀÆ÷¡£
+    echo Èôä¯ÀÀÆ÷Ã»·´Ó¦£¬ÊÖ¶¯·ÃÎÊ http://127.0.0.1:7860
+    start "" "http://127.0.0.1:7860"
+    timeout /t 2 >nul 2>&1
+    exit /b 0
+)
+
+echo ÕýÔÚÆô¶¯·þÎñ£¬¼ÓÔØÄ£ÐÍÔ¼Ðè 10 Ãë£¬ÇëÉÔµÈ...
+echo ä¯ÀÀÆ÷»á×Ô¶¯´ò¿ª http://127.0.0.1:7860
+echo ¹Ø±Õ±¾´°¿Ú¼´Í£Ö¹·þÎñ¡£
+echo.
+
 ".venv\Scripts\python.exe" demo_app.py
+set "CODE=%errorlevel%"
+
 echo.
-echo æœåŠ¡å·²åœæ­¢ï¼ŒæŒ‰ä»»æ„é”®å…³é—­çª—å£ã€‚
+if not "%CODE%"=="0" (
+    echo [´íÎó] ·þÎñÒì³£ÍË³ö£¬ÍË³öÂë %CODE%
+    echo        ³£¼ûÔ­Òò£º
+    echo          1. 7860 ¶Ë¿Ú±»±ðµÄ³ÌÐòÕ¼ÓÃ
+    echo          2. ÒÀÀµÈ±Ê§£¬Çë°´ README ÖØÐÂ°²×°
+    echo          3. deepseek_api_key.txt ÀïµÄ Key ÎÞÐ§
+    echo.
+)
+echo ·þÎñÒÑÍ£Ö¹£¬°´ÈÎÒâ¼ü¹Ø±Õ´°¿Ú¡£
 pause >nul

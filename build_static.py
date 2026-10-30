@@ -23,7 +23,8 @@ ROOT = Path(__file__).resolve().parent
 INDEX_DIR = ROOT / "rag_index"
 MODEL_DIR = ROOT / "models" / "bge-small-zh-v1.5"
 QA_FILE = ROOT / "qa_results.json"
-OUT_FILE = ROOT / "RAG界面.html"
+# 同一份内容写两个名字：中文名给本地双击，index.html 给 GitHub Pages 当首页
+OUT_FILES = [ROOT / "RAG界面.html", ROOT / "index.html"]
 
 QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
 TOP_K = 5
@@ -127,9 +128,10 @@ def main() -> None:
     print("[3/3] 套模板生成 HTML …")
     payload = json.dumps(records, ensure_ascii=False, separators=(",", ":"))
     page = TEMPLATE.replace("__DATA__", payload)
-    OUT_FILE.write_text(page, encoding="utf-8")
-    print(f"      已写出 {OUT_FILE.name}  {OUT_FILE.stat().st_size / 1024:.0f} KB")
-    print("      双击即可打开，无需启动任何服务")
+    for out in OUT_FILES:
+        out.write_text(page, encoding="utf-8")
+        print(f"      已写出 {out.name}  {out.stat().st_size / 1024:.0f} KB")
+    print("      双击 RAG界面.html 即可打开；index.html 用于 GitHub Pages 首页")
 
 
 TEMPLATE = r"""<!doctype html>
@@ -273,9 +275,9 @@ footer{margin-top:18px; padding-top:13px; border-top:1px solid var(--line);
       <span class="chip">端到端 1.9–3.1 s</span>
     </div>
     <div class="notice">
-      这是<b>离线演示页</b>：双击即开，不联网、不启动服务、不消耗 API。
-      下面 6 组问答是真实跑完检索与生成后存档的结果，检索耗时、相似度、页码都是实测值。
-      想自己任意提问，请双击项目里的 <b>启动演示.bat</b>。
+      本页是<b>预生成的静态演示</b>：6 组问答都是真实跑完检索与生成后存档的结果，
+      检索耗时、相似度、页码均为实测值；不调用 API、不需要后端，所以打开即看。
+      想要自由提问，按 README 在本地启动服务即可。
     </div>
   </header>
 

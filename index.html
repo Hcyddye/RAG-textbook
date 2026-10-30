@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>《自然语言处理导论》知识问答 · 演示</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --line:#e5e7eb; --line-soft:#eef0f2;
+  --ink:#111827; --ink-2:#374151; --ink-3:#6b7280; --ink-4:#9ca3af;
+  --accent:#2563eb; --accent-soft:#eff6ff; --accent-line:#dbeafe;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1115; --card:#171a21; --line:#272c36; --line-soft:#20242c;
+    --ink:#f3f4f6; --ink-2:#d4d8de; --ink-3:#9aa3af; --ink-4:#6f7783;
+    --accent:#7aa7f7; --accent-soft:#18202e; --accent-line:#2b3a52;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",
+              "Hiragino Sans GB","Source Han Sans SC",sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.6;
+}
+.wrap{max-width:1240px; margin:0 auto; padding:24px 24px 40px;}
+
+/* 页头 */
+.hdr{padding:2px 2px 18px; border-bottom:1px solid var(--line); margin-bottom:20px;}
+.titlerow{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+.hdr h1{margin:0; font-size:21px; font-weight:600; letter-spacing:-.2px;}
+.tag{font-size:11.5px; color:var(--accent); background:var(--accent-soft);
+     border:1px solid var(--accent-line); border-radius:999px; padding:2px 9px; white-space:nowrap;}
+.sub{margin:8px 0 0; font-size:13px; color:var(--ink-3); line-height:1.75; max-width:800px;}
+.sub code{font-size:12px; color:var(--accent); background:var(--accent-soft);
+          border:1px solid var(--accent-line); border-radius:4px; padding:0 4px;}
+.chips{margin-top:13px; display:flex; flex-wrap:wrap; gap:6px;}
+.chip{font-size:11.5px; color:var(--ink-3); background:var(--card);
+      border:1px solid var(--line); border-radius:6px; padding:3px 9px; white-space:nowrap;}
+.notice{margin-top:14px; padding:10px 13px; font-size:12.5px; line-height:1.7;
+        color:var(--ink-2); background:var(--accent-soft);
+        border:1px solid var(--accent-line); border-radius:9px;}
+.notice b{color:var(--accent); font-weight:600;}
+
+/* 布局 */
+.grid{display:grid; grid-template-columns:360px minmax(0,1fr); gap:18px; align-items:start;}
+.card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow:var(--shadow);}
+.left{padding:16px 16px 14px; position:sticky; top:16px;}
+.lb{display:block; font-size:12.5px; font-weight:500; color:var(--ink-2); margin-bottom:7px;}
+textarea{width:100%; resize:vertical; font:inherit; font-size:14px; line-height:1.75;
+         padding:11px 12px; border-radius:9px; color:var(--ink); background:var(--card);
+         border:1px solid var(--line); outline:none; transition:border-color .15s, box-shadow .15s;}
+textarea::placeholder{color:var(--ink-4);}
+textarea:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.09);}
+.btnrow{display:flex; gap:8px; margin-top:10px;}
+button{font:inherit; font-size:14px; font-weight:500; min-height:40px; border-radius:9px;
+       cursor:pointer; transition:all .15s;}
+.primary{flex:3; border:1px solid var(--accent); background:var(--accent); color:#fff;}
+.primary:hover{filter:brightness(1.07);}
+.ghost{flex:1; border:1px solid var(--line); background:transparent; color:var(--ink-2); font-size:13px;}
+.ghost:hover{border-color:var(--accent); color:var(--accent);}
+.exlabel{margin:18px 0 8px; font-size:12.5px; font-weight:500; color:var(--ink-2);}
+.exlist{display:flex; flex-direction:column; gap:6px;}
+.ex{text-align:left; font-size:13px; line-height:1.6; color:var(--ink-2); min-height:0;
+    padding:9px 11px; background:var(--bg); border:1px solid var(--line);
+    border-radius:8px; cursor:pointer; transition:all .15s;}
+.ex:hover{border-color:var(--accent-line); background:var(--accent-soft); color:var(--accent);}
+.ex.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent); font-weight:500;}
+.tip{margin-top:12px; font-size:11.5px; color:var(--ink-4); line-height:1.7;}
+
+/* 右栏 */
+.right{display:flex; flex-direction:column; gap:14px; min-width:0;}
+.ans{padding:16px 20px 16px;}
+.status{font-size:11.5px; color:var(--ink-4); font-variant-numeric:tabular-nums;
+        margin:0 0 12px; padding-bottom:9px; border-bottom:1px solid var(--line-soft);}
+.answer{font-size:14.5px; line-height:1.9; color:var(--ink-2); min-height:190px;}
+.answer h5{font-size:14px; font-weight:600; color:var(--ink-4); margin:2px 0 10px;}
+.answer p{margin:0 0 10px;}
+.answer ul,.answer ol{padding-left:22px; margin:6px 0 12px;}
+.answer li{margin-bottom:6px;}
+.answer strong{color:var(--ink); font-weight:600;}
+.answer code{font-size:12.5px; background:var(--accent-soft); color:var(--accent);
+             padding:1px 5px; border-radius:4px;}
+.evbox{padding:14px 18px 6px;}
+.evtitle{font-size:13px; font-weight:500; color:var(--ink-2); margin-bottom:10px;}
+.evscroll{max-height:460px; overflow-y:auto; padding-right:6px;}
+.evscroll::-webkit-scrollbar{width:8px;}
+.evscroll::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px;}
+.ev-lead{font-size:11.5px; color:var(--ink-4); margin:2px 0 10px;}
+.ev{border:1px solid var(--line); border-radius:10px; padding:11px 13px;
+    margin-bottom:9px; transition:border-color .15s;}
+.ev:hover{border-color:var(--accent-line);}
+.ev-weak{opacity:.88;}
+.ev-head{display:flex; align-items:center; gap:9px; margin-bottom:7px; flex-wrap:wrap;}
+.ev-rank{flex:none; width:20px; height:20px; border-radius:6px; background:var(--accent-soft);
+         color:var(--accent); border:1px solid var(--accent-line); font-size:11.5px;
+         font-weight:600; display:inline-flex; align-items:center; justify-content:center;}
+.ev-meta{font-size:12px; color:var(--ink-3); flex:1; min-width:0;
+         overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.ev-score{font-size:11.5px; color:var(--ink-4); font-variant-numeric:tabular-nums;}
+.ev-bar{height:3px; background:var(--line-soft); border-radius:2px; overflow:hidden; margin-bottom:8px;}
+.ev-bar i{display:block; height:100%; background:var(--accent); border-radius:2px; opacity:.55;}
+.ev-strong .ev-bar i{opacity:.85;}
+.ev-weak .ev-bar i{opacity:.3;}
+.ev-text{font-size:13px; color:var(--ink-2); line-height:1.78;}
+.ev-empty{font-size:12.5px; color:var(--ink-4); padding:14px 2px 18px;}
+
+footer{margin-top:18px; padding-top:13px; border-top:1px solid var(--line);
+       font-size:11.5px; color:var(--ink-4); line-height:1.85;}
+
+@media (max-width: 900px){
+  .wrap{padding:16px 14px 30px;}
+  .grid{grid-template-columns:1fr;}
+  .left{position:static;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hdr">
+    <div class="titlerow">
+      <h1>《自然语言处理导论》知识问答</h1>
+      <span class="tag">RAG · 答案可溯源到页码</span>
+    </div>
+    <p class="sub">从 604 页教材中检索相关段落，由大模型依据检索到的原文作答；
+      每条结论标注 <code>[编号]</code>，资料不足时明确拒答，不编造。</p>
+    <div class="chips">
+      <span class="chip">604 页 PDF · 正文 506 页</span>
+      <span class="chip">1,700 个文本块</span>
+      <span class="chip">bge-small-zh · 512 维</span>
+      <span class="chip">FAISS IndexFlatIP</span>
+      <span class="chip">Hit@5 100% · MRR 0.825</span>
+      <span class="chip">端到端 1.9–3.1 s</span>
+    </div>
+    <div class="notice">
+      本页是<b>预生成的静态演示</b>：6 组问答都是真实跑完检索与生成后存档的结果，
+      检索耗时、相似度、页码均为实测值；不调用 API、不需要后端，所以打开即看。
+      想要自由提问，按 README 在本地启动服务即可。
+    </div>
+  </header>
+
+  <main class="grid">
+    <aside class="card left">
+      <label class="lb" for="q">你的问题</label>
+      <textarea id="q" rows="4" placeholder="点下方示例载入，或输入一个已收录的问题…"></textarea>
+      <div class="btnrow">
+        <button id="ask" class="primary">提问</button>
+        <button id="reset" class="ghost">清空</button>
+      </div>
+      <div class="exlabel">示例问题（点击直接看结果）</div>
+      <div id="exlist" class="exlist"></div>
+      <div class="tip">离线版只内置这 6 组已存档结果；输入其他问题会提示未收录。</div>
+    </aside>
+
+    <section class="right">
+      <div class="card ans">
+        <div id="status" class="status">等待提问</div>
+        <div id="answer" class="answer">
+          <h5>使用说明</h5>
+          <p>点左侧任意一个问题，右栏会显示<b>模型生成的答案</b>与<b>它的出处</b>。</p>
+          <p>答案里的 [1] [2] 对应下方证据卡的编号，可以逐条核查到具体章节与页码；
+             如果教材里确实没写，模型会明确说「资料中没有相关内容」，而不是编一个。</p>
+        </div>
+      </div>
+      <div class="card evbox">
+        <div class="evtitle">检索证据 · 答案的出处</div>
+        <div id="evidence" class="evscroll">
+          <div class="ev-empty">提问后，这里显示命中的文本块、相似度与页码</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    链路：问题 → bge 向量化 → FAISS 检索 Top-K → 拼装带编号与页码的 Prompt → DeepSeek 生成。
+    证据卡右侧数字为余弦相似度，条形长度按相似度缩放；相似度偏低（&lt; 0.50）的块可能只是字面相近，
+    模型若判断资料不相关会明确拒答。
+  </footer>
+</div>
+
+<script>
+const DATA = [{"q":"n 元语言模型遇到数据稀疏问题，可以用哪些平滑方法？","a":"<p>n 元语言模型遇到数据稀疏问题时，参考资料中提到的平滑方法包括：</p>\n<ol><li><strong>加一平滑（加δ平滑的特例）</strong>：当 δ = 1 时，该方法又称为加一平滑；此外，针对所有不在词表 V 中的单词，可以统一映射为一个特定的词，从而保证所有情况下都不存在非零概率 [4]。</li><li><strong>古德-图灵估计法（Good-Turing Estimate）</strong>：其核心思想是将一部分已知事件的概率分配给未见的事件；对于 n 元语言模型来说，降低出现次数多的 n 元语法单元的概率，同时将剩余概率分配给未出现的 n 元语法单元 [4]。</li><li><strong>后备法（Backoff）</strong>：资料给出 n−1 元语法模型定义，并说明 PBF 和 PGT 分别代表后备法和古德-图灵估计法计算得到的概率值 [5]；平滑方法的核心思想大都可以归纳为：如果 n-gram 存在则使用其本身计数，如果不存在再退后到低阶分布 [1][5]。</li><li><strong>线性插值方法</strong>：一些平滑算法采用高阶和低阶 n 元语法模型的线性插值的方法，融合高阶和低阶语法的估计，如公式 i−n+1) = λPML(wi|wi−1 i−n+1) + (1 −λ)Psmooth(wi|wi−1 [1][5]。</li><li><strong>其他平滑算法</strong>：研究人员还提出了包括 Jelinek Mercer 平滑算法、Witten-Bell 平滑算法、Kneser-Ney 平滑算法等 [5]。</li></ol>\n<p>补充说明：平滑算法虽然较好地解决了零概率问题，但基于稀疏表示的 n 元语言模型仍有明显缺点，包括无法建模长度超过 n 的上下文、依赖人工设计规则的平滑技术，以及 n 增大时数据稀疏性增大、参数量指数级增加且参数难以准确学习 [1][3]。</p>","ms":56,"hits":[{"s":0.7145,"ch":6,"sec":"语言模型概述","ps":191,"pe":192,"t":"m 存在则使用其本身计数，如果不存在再退后到低阶分布。可以用如下公式表示：在此基础上，一些平滑算法采用高阶和低阶n 元语法模型的线性插值的方法，融合高阶和低  阶语法的估计，如以下公式所示：i−n+1) = λPML(wi|wi−1 i−n+1) + (1 −λ)Psmooth(wi|wi−1 n 语法模型整体上来看与训练语料规模和模型的阶数有较大的关系，不同的平滑算法在不同情况下的表现有较大的差距。平滑算法虽然较好的解决了零概率问题，但是基于稀疏表示的n 元语言模型仍然有三 …"},{"s":0.7128,"ch":6,"sec":"语言模型概述","ps":186,"pe":186,"t":"换，我们可以进一步的对模型进行简化，n 元语言模型就是其中一种常见的简化方法。本章接下来的章节将对如何估计n 元语言模型参数值以及模型平滑技术进行详细介绍。  由于高阶n 元语言模型还是会面临十分严重的数据稀疏问题，并且单词的离散表示也忽略了单词之间的相似性。因此，基于分布式表示和神经网络的语言模型逐渐成为了研究的热点。Bengio等人在2000 年提出了使用前馈神经网络对P(wi|wi−n+1...wi−1) 进行估计的语言模型。此后，循环神经网络、卷积神经网络、端到端记忆 …"},{"s":0.6573,"ch":6,"sec":"神经网络语言模型","ps":192,"pe":192,"t":"依赖人工设计规则的平滑技术；（3）当n 增大时，数据的稀疏性随之增大，模型的参数量更是指数级增加，并且模型受到数据稀疏问题的影响，其参数难以被准确的学习。  6.3 神经网络语言模型 随着深度神经网络的发展，利用神经网络的语言模型展现出了比n 元语言模型更强的学习能力。神经网络先进的结构使其能有效的建模长距离上下文依赖，以词向量（Word Embedding）为代表的分布式表示的语言模型深刻地影响了自然语言处理领域的其他模型与应用的变革x。因此，n 元语言模型几乎已经被神经网 …"},{"s":0.6503,"ch":6,"sec":"语言模型概述","ps":188,"pe":188,"t":"元语言模型上：当δ = 1 时，该方法又称为加一平滑。此外，针对所有不在词表V 中的单词，可以统一映射为一个特定的词，从而保证所有情况下都不存在非零概率。  6.2.2 古德-图灵估计法 古德-图灵估计法（Good-Turing Estimate） 是1953 年由I.J.Good 基于图灵(Turning) 的方法提出的，是多种平滑技术的核心。该方法基于的核心思想是将一部分已知事件的概率分配给未见的事件。对于n 元语言模型来说，降低出现次数多的n 元语法单元的概率，同时将剩 …"},{"s":0.6473,"ch":6,"sec":"语言模型概述","ps":191,"pe":191,"t":"据n −1 元语法模型定义：并且其中，PBF 和PGT 分别代表后备法和古德-图灵估计法计算得到的概率值。a(wi−1 i−n+1) 定义为：满足以下约束：  6.2.4 平滑方法总结 除了我们在上述章节介绍的平滑算法之外，研究人员们提出了有很多针对语言模型的平滑算法，包括Jelinek Mercer 平滑算法、Witten-Bell 平滑算法、Kneser-Ney 平滑算法 等。这些方法的核心思想大都可以归纳为：如果n-gram 存在则使用其本身计数，如果不存在再退后到低阶 …"}]},{"q":"CYK 算法是怎么做句法分析的？","a":"<p>CYK 算法做句法分析的方式如下：</p>\n<ol><li><strong>基本定位</strong>：CYK 是一种基于动态规划思想的自底向上语法分析算法，由 Younger 以及 Tadao Kasami 分别独立提出 [1]。</li><li><strong>语法前提</strong>：CYK 算法要求所使用的语法必须符合乔姆斯基范式（CNF），即语法规则被限制为只具有 A → BC 或 A → w 两种形式；由于任何上下文无关语法都可以转换为相应的 CNF 语法，这种限制不会对表达能力造成损失，但使基于表的分析算法变得简单和易于实现 [1]。</li><li><strong>从单词开始构造</strong>：该方法从输入的单词开始，每次使用语法规则，直到成功构造以初始符 S 为根的树 [1]。根据 CNF 语法形式，句法树的叶子节点为单词，单词的父节点为词性符号 [1]。</li><li><strong>动态规划表与初始化</strong>：算法使用句法树矩阵 T；初始化时，主对角线上依次放入单词 wi，并依次放入单词 wi 的所有词性 [4]。</li><li><strong>逐层计算</strong>：平行于主对角线逐层计算，对 d = 2 到 n、i = 0 到 n−d、k = i+1 到 j−1 进行循环，执行 Tij = Tij ∪ {A, (k, B, C)}，其中 (k, B, C) 用于保存推导路径 [4]。单元 Tij 中不仅记录非终结符的集合，还要记录推导路径 [4]。</li><li><strong>判定条件</strong>：逐层计算完成后，判断一个句子由文法 G 所产生的充要条件是：T0n = S [4]。</li></ol>","ms":9,"hits":[{"s":0.7768,"ch":3,"sec":"成分句法分析","ps":55,"pe":55,"t":"上的方法是从输入的单词开始，每次都是用语法规则，直到成功构造了以初始符S 为根的树。针对这两大类算法，本节中将分别介绍CYK 分析算法和移进-归约分析算法。  1. CYK 成分句法分析算法 Younger 以及Tadao Kasami 分别独立提出的基于动态规划思想的自底向上语法分析算法。CYK算法要求所使用的语法必须符合乔姆斯基范式（Chomsky Normal From，CNF），其语法规则被限制为只具有A →BC 或A →w 这两种形式。由于任何上下文无关语法都可以转 …"},{"s":0.7617,"ch":3,"sec":"依存句法分析","ps":74,"pe":75,"t":"的算法也可以应用于投射性依存句法分析。在4.2 节中介绍了CYK 算法用于CFG 和PCFG 的句法分析，本节将介绍基于CYK 算法改进的依存句法分析算法。  首先定义动态规划表C[s][t][i]（s ⩽i ⩽t），表示投射性依存句法树以单词wi 为根节点覆盖从单词ws 到单词wt 的句子片段的最高得分。由此可以得到C[n] 表示输入句子S =w0, w1, . . . , wn 的依存句法树的最高得分。任何以wi 为根节点覆盖ws 到wt 的投射性依存句法树都是由更小的子 …"},{"s":0.7309,"ch":3,"sec":"依存句法分析","ps":74,"pe":74,"t":"每个顶点保留权重最大的入边得到图3.18(d)所示的子图。该子图中不包含任何环，因此可以将虚拟节点进行修正，得到对应的最大生成树，如图3.18(e) 所示。  2. 投射性依存句法分析方法 设置虚拟根节点在句子首位的情况下，投射性依存句法分析树等价于嵌套依存句法分析树（Nested Dependency Trees）。因此投射性依存句法分析与上下文无关语法具有非常强的关系，很多用于上下文无关语法分析的算法也可以应用于投射性依存句法分析。在4.2 节中介绍了CYK 算法用于CF …"},{"s":0.7178,"ch":3,"sec":"成分句法分析","ps":56,"pe":56,"t":"个单元Tij中不仅记录非终结符的集合，还要记录推导路径。逐层计算完成后，判断一个句子由文法G 所产生的充要条件是：T0n = S。具体过程如算法3.1所示。  代码3.1: CYK 句法分析算法输入: 语法信息G 和句子w1w2 · · · wn输出: 句法树矩阵T// 初始化for i = 1 to n do Tii = wi;// 主对角线上依次放入单词wi ;// 依次放入单词wi 的所有词性;// 平行于主对角线逐层计算for d = 2 to n do for i  …"},{"s":0.7112,"ch":3,"sec":"成分句法分析","ps":68,"pe":68,"t":"求解算法，可以在一定程度上对句法分析中的歧义进行很好的处理，根据概率选择可能性较大的树结构。  图3.14使用CYK 算法求解PCFG 的最佳树结构分析实例  4. PCFG 的模型参数学习 模型参数学习是指给定CFG 文法G 下，如何学习G 中规则的概率参数构建PCFG 文法。有两种常见的方法用于学习文法规则概率：（1）有大规模句法树标注数据（树库）；（2）有大规模的没有标注句法树的句子。  在有大规模标注句法树的情况下，可以基于最大似然估计，统计非终结符的出现次数进行概率 …"}]},{"q":"BLEU 指标如何计算机器翻译质量？它有什么缺点？","a":"<p>结论：参考资料只说明了 BLEU 的“面向精确率”计算口径，没有给出完整计算公式；其缺点在资料中主要体现为半自动评测与人工评测一致性不足、以及语义相同但用词差别大的句子难以判断。</p>\n<ul><li><strong>一、BLEU 如何计算机器翻译质量</strong></li><li>BLEU 是一个面向精确率的度量，其分母是候选翻译中 n-gram 的数量总和 [2]。</li><li>BLEU 体现的是候选翻译中有多少 n-gram 出现在标准翻译中 [2]。</li><li>参考资料没有给出 BLEU 的完整计算公式（如 n-gram 匹配数、长度惩罚等具体计算方式），因此不能依据资料进一步展开公式细节。</li></ul>\n<ul><li><strong>二、BLEU 的缺点</strong></li><li>资料指出，采用半自动评测方法时，目前半自动评测结果与人工评测的一致性还亟待提升 [3]。</li><li>对于用词差别很大、但是语义相同的句子，判断本身也是自然语言处理领域的难题 [3]。</li><li>因此，如何有效地评测翻译结果是机器翻译任务所面临的挑战 [3]。</li></ul>\n<ul><li><strong>三、资料未涉及的内容</strong></li><li>参考资料没有系统列出 BLEU 的缺点清单，也没有说明 BLEU 对语序、召回率等方面的具体缺陷；这些内容在提供的资料中没有相关内容。</li></ul>","ms":15,"hits":[{"s":0.695,"ch":8,"sec":"基于神经网络的机器翻译方法","ps":286,"pe":286,"t":"翻译性能的评价指标BLEU 的值就开始出现明显地下降。因此，这就启发我们使用更加有效地机制从编码器向解码器传递源语言信息，这就是接下来要讲到的注意力机制。  循环神经网络循环神经网络结合注意力机制序列长度20个单词50个单词图8.11基于简单循环网络的机器翻译模型的瓶颈引入注意力机制的循环机器翻译架构与基于简单循环网络的机器翻译模型大体结构相似，均采用循环神经网络作为编码器与解码器的实现。关键的不同点在于注意力机制的引入使得不再需要把原始文本中的所有必要信息压缩到一个向量当中 …"},{"s":0.6679,"ch":11,"sec":"文本摘要的评测","ps":397,"pe":397,"t":"11.61的分母是标准摘要中所有ngram 数量的总和。相反地，机器翻译的评价指标BLEU 是一个面向精确率的度量，其分母是候选翻译中n-gram 的数量总和。因此，ROUGE 体现的是标准摘要中有多少n-gram 出现在候选摘要中，而BLEU 体现了候选翻译中有多少n-gram 出现在标准翻译中。"},{"s":0.6361,"ch":8,"sec":"基于统计的机器翻译方法","ps":271,"pe":271,"t":"БЕЖАТЬ ВПЕРЕД”（俄语），机器翻译给出的结果是“向前跑”，我们无法确认结果正确与否。因此，如何构建具备可解释性的机器翻译模型也是需要解决的难点。  (3) 翻译结果评测困难。语言有很大的灵活性和多样性，同样一句话可以有非常多种的翻译方法。对机器翻译性能进行评测可以采用人工评测和半自动评测方法。人工评测虽然是相对准确的一种方式，但是其成本高昂，根据艾伦人工智能研究院（AI2）GENIE 人工评测榜单给出的数据，针对800 条机器翻译效果进行评测需要花费约80 美元。 …"},{"s":0.6264,"ch":8,"sec":"基于神经网络的机器翻译方法","ps":285,"pe":286,"t":"向量hm 编码整个源语言序列。这对于较短的源语言文本没有什么问题，但随着文本序列长度的逐渐加长，单一的一个向量hm 可能不足以承载源语言序列当中的所有信息。  如图8.11所示，蓝色的线代表上述简单循环神经网络性能随源语言文本长度的变化趋势。当文本长度在20 个单词以内时，单一向量能够承载源语言文本中的必要信息。随着文本序列的进一步增加，翻译性能的评价指标BLEU 的值就开始出现明显地下降。因此，这就启发我们使用更加有效地机制从编码器向解码器传递源语言信息，这就是接下来要讲到 …"},{"s":0.6246,"ch":8,"sec":"机器翻译概述","ps":270,"pe":271,"t":"指代预训练语言模型BERT。在数据驱动的统计机器翻译和神经机器翻译模型中，  如何才能让模型具备超大规模参数空间的建模能力和持续学习能力都是十分巨大的挑战。  (2) 翻译结果不可解释。目前机器翻译算法多采用数据驱动的方法，所采用的模型通常不具备可解释性。这就造成了机器翻译算法虽然给出了翻译结果，并且效果可能还很好，但是其对语言的理解和翻译过程与人的理解和翻译过程完全不同。机器翻译算法的目标仅是根据人工定义的目标函数进行优化，使得人们无法理解机器翻译算法的过程，不能够对算法进 …"}]},{"q":"开放领域问答中的「检索-阅读理解」架构是怎么工作的？","a":"<p>开放领域问答中的「检索-阅读理解」架构工作方式如下：</p>\n<ul><li><strong>总体思路</strong>：由于开放问答任务面对的是大量的文档或网页，为了兼顾准确率与性能，开放问答一般会采用文档检索方法快速筛选出与询问最相关的文档，在筛选出相关文档之后再通过阅读理解的方式给出问题的答案，这种架构被称为检索-阅读理解架构 [4]。</li><li><strong>基本流程与模块</strong>：该架构主要包含文档检索器和文档阅读器两个模块，此外有些算法中还包含对检索得到的文档的后处理以及对抽取答案的后处理 [4]。</li><li><strong>与开放领域问答整体流程的对应关系</strong>：通常情况下开放领域问答由答案段落检索和答案抽取两个部分组成；目前的开放领域问答系统很多是结合搜索与阅读理解，在通过传统搜索或语义搜索得到候选篇章后，利用阅读理解技术获得最终答案 [2]。</li><li><strong>阅读理解环节的目标</strong>：机器阅读理解目标就是根据给定的一篇或多篇文本内容回答给定的问题 [3]。</li></ul>","ms":10,"hits":[{"s":0.6806,"ch":10,"sec":"智能问答概述","ps":339,"pe":339,"t":"解文本内容，从而直接回答用户问题。1977 年Lehnert 发布的QUALM 系统 提出了阅读理解概念，针对不同的问题类型使用不同的策略从文章中寻找答案。  20 世纪90 年代开始，随着互联网的发展和统计机器学习技术的不断进步，更实用的开放领域 问答系统开始兴起。1993 年由麻省理工学院Boris Katz 教授带领InfoLab 实验室开发的第一个基于互联网的智能问答系统START 上线，开启了以整个互联网为知识库的开放领域问答时代。"},{"s":0.6693,"ch":10,"sec":"智能问答概述","ps":341,"pe":342,"t":"图谱中根据实体和关系并利用推理机制可以进行问题回答。由于知识图谱问答与知识图谱构建、表示与推理紧密关联，因此相关算法将在本书第12 章知识图谱部分进行介绍。  开放领域问答（Open-domain Question Answering，ODQA）是通过大规模文档集合回答不限定领域的事实性问题。通常情况下开放领域问答由答案段落检索和答案抽取两个部分组成。IBM Watson系统 就是采用了开放领域问答架构。通过将问题分解并生成检索词，之后根据检索词得到相  关段落，并对段落进行 …"},{"s":0.668,"ch":10,"sec":"阅读理解","ps":342,"pe":342,"t":"在通过传统搜索或语义搜索得到候选篇章后，利用阅读理解技术获得最终答案。目前的搜索引擎中也大量使用该项技术，提升用户的搜索体验。相关算法将在本章中进行介绍。  10.2 阅读理解 机器阅读理解目标就是根据给定的一篇或多篇文本内容回答给定的问题。这个任务对于算法的自然语言理解能力和推理能力是很大的考验。虽然阅读理解任务研究在1999 年就已经开始，但是受到基于特征的机器学习算法能力的限制，以及缺乏大规模的标注数据，阅读理解的研究进展相对较慢。2016 年斯坦福大学推出了SQuAD …"},{"s":0.6447,"ch":10,"sec":"开放领域问答","ps":363,"pe":364,"t":"15给出了开放领域问答搜索引擎中的结果，用户输入查询“血压170 严重吗”，搜索引擎定位了相关文档，并将直接输出最终答案。  开放领域问答样例（来源：百度）  10.5.1 基于检索-阅读理解架构的开放问答模型 由于开放问答任务面对的是大量的文档或网页，为了兼顾准确率与性能，开放问答一般会采用文档检索方法快速筛选出与询问最相关的文档，在筛选出相关文档之后再通过阅读理解的方式给出问题的答案，这种架构被称为检索-阅读理解架构。该架构的基本流程框架如图10.16所示，主要包含文档检 …"},{"s":0.6334,"ch":10,"sec":"开放领域问答","ps":363,"pe":363,"t":"句子是否含有相同的语义，其中文本具有高度重叠的词汇，重点考察模型对高层语义的识别能力。训练集，开发集和测试集分别包含49401，2000，2000 个样本。  10.5 开放领域问答 开放领域问答是与搜索引擎类似的形式，对于一个给定的询问Q，开放领域问答系统需要先从一个规模非常大的文档集合或知识库（如Wikipedia 或互联网）D = {d1, ..., dn} 中选择与问题最相关的文档d，然后通过文档d 中包含的信息，给出询问Q 的答案A。从任务定义中可以发现，开放问答的 …"}]},{"q":"知识图谱向量表示中 TransE 的基本思想是什么？","a":"<p>结论：TransE 的基本思想是把知识图谱中的每个关系看作从头实体向量到尾实体向量的一个平移变换，并通过最小化平移转化的误差，将实体和关系类型映射到低维空间 [2][4]。</p>\n<ul><li>具体来说：</li><li>TransE 属于基于距离度量的知识表示学习方法（距离模型/平移模型），该类模型将每个关系视为从头实体向量到尾实体向量的平移变换，通过最小化平移转化误差学习低维表示 [4]。</li><li>在表示空间中，对于三元组 &lt; h, ℓ, t &gt;，头实体 h 的向量加上关系 ℓ 的向量等于尾实体 t 的向量 [2]。</li><li>该思想受到词向量空间平移不变现象的启发，例如 v(man) − v(woman) ≈ v(king) − v(queen) [2]。</li></ul>","ms":9,"hits":[{"s":0.6894,"ch":12,"sec":"知识图谱推理","ps":437,"pe":437,"t":"识表示，知识图谱也可以直接应用于简单的三元组推理任务。  例如，本章第12.2.2节中已经介绍过知识图谱的向量表示方法，包括TransE、TransR 等。  不同于TransE 等方法给每个实体、关系单独学习一个表示向量，文献 提出使用神经张量网络（Neural Tensor Network，NTN）来分类实体对之间的关系，并使用构成实体的词向量的平均作为该实体表示。基于神经张量网络知识图谱推理算法流程如图12.23所示。"},{"s":0.6761,"ch":12,"sec":"知识图谱表示与存储","ps":411,"pe":412,"t":"odel），该类模型将知识图谱中的每个关系看作从头实体向量到尾实体向量的一个平移变换。通过最小化平移转化的误差，将知识图谱中的实体和关系类型映射到低维空间。  1. 知识图谱向量表示学习TransE 算法 本书第4 章介绍了CBOW 和Skip-Gram 等分布式单词向量表示，在其研究中发现词向量空间存在平移不变现象，例如：v(man) −v(woman) ≈v(king) −v(queen)这里v(w) 表示单词w 的词向量。换言之，词向量捕获到了man 和woman、ki …"},{"s":0.6653,"ch":12,"sec":"知识图谱表示与存储","ps":414,"pe":414,"t":"tℓ后，就可以使用与TransE 类似的评分函数进行训练：在实现时，TransR 算法还对h，ℓ，t 的表示向量以及关系空间中映射的表示向量的范数添加约束。  12.2.3 基于表的知识谱图谱存储 尽管知识图谱是用图的形式描述，但图数据库并不是存储知识图谱的唯一方案。在工业界，很多成熟的数据库都是基于关系模型，知识图谱的数据可以通过一定的设计，从而可以利用关系型数据库存储。基于关系型数据库的知识图谱存储方案主要可以分为四种：基于三元组的知识图谱存储、基于属性表的知识图谱存储、 …"},{"s":0.6107,"ch":12,"sec":"知识图谱表示与存储","ps":411,"pe":411,"t":"示向量也更接近，可以缓解长尾分布的知识表达问题；(2) 计算效率更高，对于计算机来说，已经提前计算好的蕴含语义知识的低维数值向量显然比复杂的知识图谱更高效；  (3) 适用于深度学习算法，通过将知识映射到语义空间中，使得不同来源的知识可以很方便地互相融合。  研究人员们先后提出了多种模型学习知识图谱中实体和关系的表示向量，其中最常见的是基于距离度量的知识表示学习方法。基于距离度量的方法表示通过计算实体之间的距离来评价事实三元组的置信度。距离模型（Distance Model） …"},{"s":0.6012,"ch":12,"sec":"习题","ps":454,"pe":454,"t":"已知的信息推断出新的结论，并能够对这些推断过程进行解释，以便人们更好地理解推理的基础和原因。  12.7 习题 (1) 基于属性图的知识图谱表示有什么缺点？  (2) TransR 算法相比TransE 算法做了什么改进，可以解决什么问题？  (3) 使用关系型数据库作为知识图谱的存储介质，想要兼顾存储空间的利用率和查询效率，应当使用哪种存储方案？  (4) 实体对齐技术主要解决哪些问题？存在哪些技术难点？  (5) 基于表示学习的知识图谱推理相比于基于符号的知识图谱推理，有 …"}]},{"q":"这本书里有没有讲 GPT-4 的参数量是多少？","a":"<p>提供的资料中没有相关内容。</p>\n<p>参考资料中只涉及 GPT-3、OPT、BLOOM 等模型的参数量与训练细节 [1][2][3][4]，其中提到过 1750 亿参数语言模型等时间线信息 [2]，但没有出现 GPT-4 的参数量的任何说明。要回答该问题，还缺少关于 GPT-4 模型参数规模的具体资料。</p>","ms":9,"hits":[{"s":0.6022,"ch":6,"sec":"大规模语言模型","ps":209,"pe":210,"t":"3 模型的训练过程，包括模型架构、训练数据组成、训练过程以及评估方法。由于GPT-3 并没有开放源代码，根据论文直接重现整个训练过程并不容易，因此文献 介绍  了根据GPT-3 的描述复现的过程，并构造开源了系统OPT（Open Pre-trained Transformer Language在模型架构方面不论是GPT-3 还是OPT 所采用的模型结构都与我们在本章第6.4.2节所介绍的GPT-2 模型一样，都采用由多层Transformer 组成的单向语言模型，采用自回归方 …"},{"s":0.6022,"ch":6,"sec":"大规模语言模型","ps":208,"pe":209,"t":"的技术细节还没有完全公开，一些已经公开的研究内容和方法也仍然需要更多时间进行验证，阅读该部分内容需要大家更多的独立思考和批判精神，并结合当前的研究进行理解。  参数量图6.8大模型时间线2019年15亿参数语言模型2018年1亿参数语言模型1750亿参数语言模型1750亿参数指令微调+类人反馈120亿参数代码模型语言模型+代码模型指令微调语言模型+代码模型指令微调+有监督微调语言模型+代码模型指令微调+有监督微调+强化学习调整对话优化优化运行成本图6.9 ChatGPT 发展 …"},{"s":0.5996,"ch":6,"sec":"大规模语言模型","ps":210,"pe":210,"t":"io Redit数据的方法。由于这些数据集合中包含的绝大部分都是英文数据，因此OPT 也从Common Crawl数据集中抽取了部分非英文数据加入训练语料。  由于模型参数量和所使用的数据量都非常巨大，普通的服务器单机无法完成训练过程，因此通常采用分布式架构完成训练。GPT-3 和OPT 中没有对这个部分给出详细的描述。文献 针对GPT-3 的训练过程仅介绍了训练过程全部使用NVIDIA V100 GPU，文献 介绍了OPT 使Megatron-LM 张量并行（Tensor  …"},{"s":0.5932,"ch":6,"sec":"大规模语言模型","ps":210,"pe":210,"t":"给出了9 种模型参数的细节，如表6.3所示。采用AdamW 优化器进行优化，其参数(β1, β2) 设置为(0.9, 0.95)。其他参数细节可以参考文献。  表6.3 OPT 不同模型规模下的具体参数细节参数规模层数自注意力头数嵌入表示维度学习率全局批次大小  50 万  50 万 100 万100 万200 万400 万400 万200 万200 万在预训练语料集方面，根据文献 中的报道，GPT-3 训练语料通过主要包含经过过滤的CommonCrawl 的原始数据有45T …"},{"s":0.5483,"ch":6,"sec":"预训练语言模型","ps":198,"pe":198,"t":"模型结构以及单向语言模型的预训练过程和判别式任务精调。  层归一化层归一化全连接层多头自注意力词向量层文本预测任务分类器图6.4 GPT 预训练语言模型结构  1. 无监督预训练 GPT 采用生成式预训练方法，单向意味着模型只能从左到右或从右到左对文本序列建模，所采用的Transformer 结构x和解码策略保证了输入文本每个位置只能依赖过去时刻的信息。  给定文本序列w = w1w2...wn，GPT 首先在输入层中将其映射为稠密的向量：其中，vt i 是词wi 的词向量， …"}]}];
+
+const $ = (id) => document.getElementById(id);
+const norm = (s) => (s || "").replace(/[\s，。？！、；：,.?!;:「」“”"'（）()]/g, "").toLowerCase();
+
+let current = -1;
+
+function evHTML(hits){
+  let s = `<div class="ev-lead">共 ${hits.length} 条，按相似度降序 · 编号与答案中的 [n] 一一对应</div>`;
+  hits.forEach((h, i) => {
+    const tone = h.s >= 0.60 ? "strong" : h.s >= 0.50 ? "mid" : "weak";
+    const pct = Math.max(6, Math.min(100, (h.s - 0.35) / 0.45 * 100));
+    s += `<div class="ev ev-${tone}">
+      <div class="ev-head">
+        <span class="ev-rank">${i + 1}</span>
+        <span class="ev-meta">第 ${h.ch} 章 · ${h.sec} · p.${h.ps}–${h.pe}</span>
+        <span class="ev-score">${h.s.toFixed(3)}</span>
+      </div>
+      <div class="ev-bar"><i style="width:${pct.toFixed(0)}%"></i></div>
+      <div class="ev-text">${h.t}</div>
+    </div>`;
+  });
+  return s;
+}
+
+function render(i){
+  const d = DATA[i];
+  current = i;
+  $("q").value = d.q;
+  $("status").textContent = `检索 Top-${d.hits.length} · ${d.ms} ms · 生成完成 · 答案 ${(d.a.replace(/<[^>]+>/g, "")).length} 字`;
+  $("answer").innerHTML = d.a;
+  $("evidence").innerHTML = evHTML(d.hits);
+  document.querySelectorAll(".ex").forEach((el, k) => el.classList.toggle("on", k === i));
+  $("evidence").scrollTop = 0;
+}
+
+function lookup(text){
+  const n = norm(text);
+  if (!n) return -1;
+  for (let i = 0; i < DATA.length; i++) if (norm(DATA[i].q) === n) return i;
+  for (let i = 0; i < DATA.length; i++) {
+    const k = norm(DATA[i].q);
+    if (n.length >= 6 && (k.includes(n) || n.includes(k))) return i;
+  }
+  return -1;
+}
+
+function ask(){
+  const i = lookup($("q").value);
+  if (i >= 0) { render(i); return; }
+  current = -1;
+  $("status").textContent = "未收录该问题（离线版）";
+  $("answer").innerHTML =
+    `<h5>这个页面是离线存档版</h5>
+     <p>它只保存了 6 组真实问答结果，不能对任意新问题做检索与生成——那需要有后端服务在跑。</p>
+     <p>想看完整交互：双击项目目录里的 <code>启动演示.bat</code>，等浏览器自动打开
+        <code>127.0.0.1:7860</code>，左侧输入框就能问任意问题（每次提问会调用一次 DeepSeek API）。</p>
+     <p>或者直接点左边任一个示例问题，看这条链路跑出来的答案和证据。</p>`;
+  $("evidence").innerHTML = `<div class="ev-empty">未检索：离线页面没有向量索引，这里只展示已存档的证据。</div>`;
+  document.querySelectorAll(".ex").forEach((el) => el.classList.remove("on"));
+}
+
+$("exlist").innerHTML = DATA.map((d, i) =>
+  `<button class="ex" data-i="${i}">${d.q}</button>`).join("");
+document.querySelectorAll(".ex").forEach((el) => {
+  el.addEventListener("click", () => render(Number(el.dataset.i)));
+});
+$("ask").addEventListener("click", ask);
+$("reset").addEventListener("click", () => {
+  current = -1;
+  $("q").value = "";
+  $("status").textContent = "等待提问";
+  $("answer").innerHTML = `<h5>使用说明</h5>
+    <p>点左侧任意一个问题，右栏会显示<b>模型生成的答案</b>与<b>它的出处</b>。</p>
+    <p>答案里的 [1] [2] 对应下方证据卡的编号，可以逐条核查到具体章节与页码；
+       如果教材里确实没写，模型会明确说「资料中没有相关内容」，而不是编一个。</p>`;
+  $("evidence").innerHTML = `<div class="ev-empty">提问后，这里显示命中的文本块、相似度与页码</div>`;
+  document.querySelectorAll(".ex").forEach((el) => el.classList.remove("on"));
+});
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask(); }
+});
+
+// 打开即有内容：默认展示第一组问答，避免首屏空白；支持 #q3 定位到第 3 题
+const m = (location.hash || "").match(/^#q(\d+)$/);
+const start = m ? Math.min(DATA.length - 1, Math.max(0, Number(m[1]) - 1)) : 0;
+if (DATA.length) render(start);
+</script>
+</body>
+</html>

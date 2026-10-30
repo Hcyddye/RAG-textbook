@@ -23,7 +23,7 @@ ROOT = Path(__file__).resolve().parent
 INDEX_DIR = ROOT / "rag_index"
 MODEL_DIR = ROOT / "models" / "bge-small-zh-v1.5"
 QA_FILE = ROOT / "qa_results.json"
-OUT_FILE = ROOT / "看成品.html"
+OUT_FILE = ROOT / "RAG界面.html"
 
 QUERY_PREFIX = "为这个句子生成表示以用于检索相关文章："
 TOP_K = 5
